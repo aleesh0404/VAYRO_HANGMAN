@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vayro_Hangman — Hangman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- THEME TOGGLE (bottom‑right) -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <span class="t-icon" id="themeIcon">🌙</span>
+    <span class="t-label" id="themeLabel">DARK</span>
+  </button>
+
+  <!-- ANIMATED BACKGROUND -->
+  <canvas class="bg-canvas" id="bgCanvas"></canvas>
+
+  <!-- LANDING SCREEN -->
+  <section class="screen active" id="landingScreen">
+    <div class="landing-center">
+      <div class="logo-block">
+        <div class="logo-glow-ring"></div>
+        <svg class="logo-hangman" viewBox="0 0 100 120" width="90" height="108">
+          <line x1="50" y1="2" x2="50" y2="22" stroke="var(--accent-gold)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M35,22 Q50,14 65,22 Q72,38 60,50 Q50,58 40,50 Q28,36 35,22Z"
+                fill="none" stroke="var(--accent-gold)" stroke-width="2.5"/>
+          <circle cx="43" cy="34" r="2" fill="var(--accent-gold)"/>
+          <circle cx="57" cy="34" r="2" fill="var(--accent-gold)"/>
+          <path d="M43,43 Q50,49 57,43" fill="none" stroke="var(--accent-gold)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="50" y1="58" x2="50" y2="90" stroke="var(--accent-cyan)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="50" y1="68" x2="34" y2="82" stroke="var(--accent-cyan)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="50" y1="68" x2="66" y2="82" stroke="var(--accent-cyan)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="50" y1="90" x2="36" y2="108" stroke="var(--accent-cyan)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="50" y1="90" x2="64" y2="108" stroke="var(--accent-cyan)" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <h1 class="logo-title">VAYRO<span class="gold">_HANGMAN</span></h1>
+        <p class="logo-tagline">Guess it before it's too late</p>
+      </div>
+
+      <div class="stats-row" id="statsRow">
+        <div class="stat-box">
+          <span class="stat-val" id="lsScore">0</span>
+          <span class="stat-key">SCORE</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="lsWins">0</span>
+          <span class="stat-key">WINS</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val" id="lsStreak">0</span>
+          <span class="stat-key">STREAK</span>
+        </div>
+      </div>
+
+      <button class="btn-launch" id="btnStart">
+        <span class="btn-launch-text">START GAME</span>
+        <span class="btn-launch-glow"></span>
+      </button>
+
+      
+    </div>
+  </section>
+
+  <!-- CATEGORY SCREEN -->
+  <section class="screen" id="categoryScreen">
+    <div class="top-bar">
+      <button class="btn-back" id="backToLanding">‹ Back</button>
+      <h2 class="section-title">Pick a <span class="gold">Category</span></h2>
+      <div class="top-score">Score <strong id="catScoreVal">0</strong></div>
+    </div>
+
+    <div class="cat-grid" id="catGrid">
+      <div class="cat-card" data-cat="food">
+        <div class="cat-glow"></div>
+        <span class="cat-emoji">🍕</span>
+        <span class="cat-name">FOOD</span>
+        <span class="cat-sub" id="cat-sub-food">— words</span>
+        <div class="cat-stars" id="st-food"></div>
+        <div class="cat-complete-badge" id="cb-food"></div>
+      </div>
+
+      <div class="cat-card" data-cat="animals">
+        <div class="cat-glow"></div>
+        <span class="cat-emoji">🦁</span>
+        <span class="cat-name">ANIMALS</span>
+        <span class="cat-sub" id="cat-sub-animals">— words</span>
+        <div class="cat-stars" id="st-animals"></div>
+        <div class="cat-complete-badge" id="cb-animals"></div>
+      </div>
+
+      <div class="cat-card" data-cat="countries">
+        <div class="cat-glow"></div>
+        <span class="cat-emoji">🌍</span>
+        <span class="cat-name">COUNTRIES</span>
+        <span class="cat-sub" id="cat-sub-countries">— words</span>
+        <div class="cat-stars" id="st-countries"></div>
+        <div class="cat-complete-badge" id="cb-countries"></div>
+      </div>
+
+      <div class="cat-card" data-cat="cities">
+        <div class="cat-glow"></div>
+        <span class="cat-emoji">🏙️</span>
+        <span class="cat-name">CITIES</span>
+        <span class="cat-sub" id="cat-sub-cities">— words</span>
+        <div class="cat-stars" id="st-cities"></div>
+        <div class="cat-complete-badge" id="cb-cities"></div>
+      </div>
+
+      <div class="cat-card locked" data-cat="mixed" id="mixedCard">
+        <div class="cat-glow"></div>
+        <span class="cat-emoji">🔥</span>
+        <span class="cat-name">MIXED</span>
+        <span class="cat-sub">All categories</span>
+        <div class="lock-overlay" id="lockOverlay">
+          <span class="lock-icon">🔒</span>
+          <span class="lock-msg">Complete all 4 categories</span>
+        </div>
+        <div class="cat-stars" id="st-mixed"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME SCREEN -->
+  <section class="screen" id="gameScreen">
+    <div class="game-topbar">
+      <button class="btn-back sm" id="backToCats">‹ Cats</button>
+      <div class="game-meta">
+        <span class="cat-pill" id="catPill">FOOD</span>
+        <span class="score-badge">Score <strong id="gScore">0</strong></span>
+      </div>
+      <div class="heart-row" id="heartRow"></div>
+    </div>
+
+    <div class="game-body">
+      <div class="hang-col">
+        <div class="hang-lives-text"><span id="livesNum">7</span> lives left</div>
+        <svg class="hang-svg" viewBox="0 0 220 265" xmlns="http://www.w3.org/2000/svg" id="hangSvg">
+          <rect x="5" y="247" width="210" height="8" rx="4" fill="var(--gallows-color)"/>
+          <rect x="55" y="18" width="8" height="237" rx="4" fill="var(--gallows-color)"/>
+          <rect x="55" y="18" width="100" height="8" rx="4" fill="var(--gallows-color)"/>
+          <rect x="149" y="18" width="6" height="38" rx="3" fill="var(--gallows-color)"/>
+          <line x1="55" y1="55" x2="95" y2="18" stroke="var(--gallows-color)" stroke-width="5" stroke-linecap="round"/>
+          <circle id="hp1" class="hp" cx="152" cy="73" r="19" fill="none" stroke="var(--hang-color)" stroke-width="4" opacity="0"/>
+          <g id="hp1-face" opacity="0">
+            <circle cx="145" cy="70" r="2.5" fill="var(--hang-color)"/>
+            <circle cx="159" cy="70" r="2.5" fill="var(--hang-color)"/>
+            <path d="M146,79 Q152,84 158,79" fill="none" stroke="var(--hang-color)" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <line id="hp2" class="hp" x1="152" y1="92" x2="152" y2="160" stroke="var(--hang-color)" stroke-width="4" stroke-linecap="round" opacity="0"/>
+          <line id="hp3" class="hp" x1="152" y1="110" x2="118" y2="142" stroke="var(--hang-color)" stroke-width="4" stroke-linecap="round" opacity="0"/>
+          <line id="hp4" class="hp" x1="152" y1="110" x2="186" y2="142" stroke="var(--hang-color)" stroke-width="4" stroke-linecap="round" opacity="0"/>
+          <line id="hp5" class="hp" x1="152" y1="160" x2="118" y2="205" stroke="var(--hang-color)" stroke-width="4" stroke-linecap="round" opacity="0"/>
+          <line id="hp6" class="hp" x1="152" y1="160" x2="186" y2="205" stroke="var(--hang-color)" stroke-width="4" stroke-linecap="round" opacity="0"/>
+          <line id="hp7" class="hp" x1="118" y1="205" x2="100" y2="222" stroke="var(--hang-color)" stroke-width="4" stroke-linecap="round" opacity="0"/>
+        </svg>
+        <div class="wrong-box">
+          <div class="wrong-title">Wrong guesses</div>
+          <div class="wrong-letters-list" id="wrongList"></div>
+        </div>
+      </div>
+
+      <div class="word-col">
+        <div class="hint-strip">
+          <span class="hint-lbl">HINT</span>
+          <span class="hint-val" id="hintVal">—</span>
+        </div>
+        <div class="word-slots" id="wordSlots"></div>
+        <div class="word-info" id="wordInfo"></div>
+        <div class="keyboard-wrap" id="keyboard"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT MODAL -->
+  <div class="modal-overlay hidden" id="resultModal">
+    <div class="modal-card" id="modalCard">
+      <div class="modal-burst" id="modalBurst"></div>
+      <div class="modal-emo" id="modalEmo">🎉</div>
+      <h3 class="modal-h" id="modalH">You Won!</h3>
+      <p class="modal-p" id="modalP">Excellent guessing!</p>
+      <div class="modal-reveal" id="modalReveal"></div>
+      <div class="modal-pts" id="modalPts"></div>
+      <div class="modal-btns">
+        <button class="mbtn primary" id="btnNext">Next Word ›</button>
+        <button class="mbtn secondary" id="btnCats">Categories</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
