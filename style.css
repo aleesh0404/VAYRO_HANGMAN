@@ -774,8 +774,4 @@ body::before{
 
 @media (max-width: 600px) {
   .toast { font-size: 0.7rem; padding: 8px 16px; white-space: normal; width: 80%; }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> d0abad0 (overwrite html css js files)
