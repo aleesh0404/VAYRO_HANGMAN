@@ -1,5 +1,5 @@
 /* ============================================================
-   HANGMAN — script.js (All categories 50 words each)
+   HANGMAN — script.js (Optimized + Correct Word Tracking)
    ============================================================ */
 'use strict';
 
@@ -512,7 +512,7 @@ const WORD_DATA = {
   mixed: {
     label: 'MIXED 🔥', emoji: '🔥',
     accent: '#ffd166', glow: 'rgba(255,209,102,.16)', border: 'rgba(255,209,102,.28)', shine: 'rgba(255,209,102,.12)',
-    words: [] // filled at runtime from all categories
+    words: []
   }
 };
 
@@ -885,11 +885,12 @@ function guess(letter) {
   const allDone = wordLetters.every(l => game.guessed.has(l));
 
   if (allDone) {
-    setTimeout(() => endGame(true), 520);
+    // Immediately end game without extra delay (reduces lag)
+    endGame(true);
   } else if (game.lives <= 0) {
     wordLetters.forEach(l => game.guessed.add(l));
     updateSlots();
-    setTimeout(() => endGame(false), 650);
+    endGame(false);
   }
 }
 
@@ -912,7 +913,7 @@ function endGame(won) {
     if (state.streak > state.bestStreak) state.bestStreak = state.streak;
     sound('win');
 
-    // Record the solved word in category progress
+    // Record the solved word ONLY on win
     const prog = state.progress[game.category];
     if (!prog.played.includes(game.word)) {
       prog.played.push(game.word);
@@ -931,18 +932,8 @@ function endGame(won) {
   } else {
     state.streak = 0;
     sound('lose');
-    // Still record the word as played (even if lost)
-    const prog = state.progress[game.category];
-    if (!prog.played.includes(game.word)) {
-      prog.played.push(game.word);
-      save();
-      // Check category completion again
-      const catTotal = game.category === 'mixed' ? 999 : WORD_DATA[game.category].words.length;
-      if (game.category !== 'mixed' && prog.played.length === catTotal) {
-        showToast(`🎉 ${WORD_DATA[game.category].label} completed! 🎉`);
-      }
-      checkAllCategoriesCompleted();
-    }
+    // Do NOT record the word when losing
+    // (no addition to played array)
   }
 
   save();
